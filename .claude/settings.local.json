@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls \"C:\\\\Users\\\\crisa\\\\OneDrive\\\\Documents\\\\Eric\\\\Portfolio\\\\.claude\" 2>/dev/null; mkdir -p \"C:\\\\Users\\\\crisa\\\\OneDrive\\\\Documents\\\\Eric\\\\Portfolio\\\\.claude\")",
+      "Bash(where node *)",
+      "Bash(where npx *)",
+      "Bash(where python *)",
+      "Bash(where py *)",
+      "Bash(xargs -I{} ls -la \"{}\")",
+      "Bash(sort -k6,7)",
+      "WebFetch(domain:www.youtube.com)",
+      "WebFetch(domain:ericfarjun.com)"
+    ]
+  }
+}
