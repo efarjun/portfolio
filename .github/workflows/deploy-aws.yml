@@ -1,0 +1,42 @@
+name: Deploy to S3 + CloudFront
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# id-token: write lets the job request an OIDC token, which AWS trades for
+# short-lived credentials. No AWS access keys are stored in GitHub.
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: aws-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Assemble site
+        run: |
+          mkdir _site
+          cp -r index.html css js assets _site/
+
+      - name: Sync to S3
+        run: aws s3 sync _site "s3://${{ vars.S3_BUCKET }}" --delete
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/*"
